@@ -9,6 +9,7 @@ const routes = express.Router();
 
 // Controller Definitions
 
+// Auth0 Integration Testing endpoints
 routes.get("/private-test-end", checkJwt, (req, res, next) => {
   res.send("private-test-end");
 });

@@ -6,6 +6,8 @@ const audience = process.env.AUTH0_AUDIENCE;
 const domain = process.env.AUTH0_DOMAIN;
 const serverPort = process.env.SERVER_PORT;
 const clientOriginUrl = process.env.CLIENT_ORIGIN_URL;
+const dbName = process.env.DB_NAME;
+const dbConnectionUrl = process.env.DB_CONNECTION_URL;
 
 if (!audience) {
   throw new Error(
@@ -39,4 +41,6 @@ module.exports = {
   serverPort,
   clientOriginUrl,
   clientOrigins,
+  dbName,
+  dbConnectionUrl,
 };
