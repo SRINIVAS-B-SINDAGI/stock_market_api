@@ -5,6 +5,7 @@ const { checkJwt } = require("../authz/check-jwt");
 const {
   getEtfInformation,
   getStockInformation,
+  handleQueryParamError,
 } = require("../routes/routes.services");
 // Router Definition
 
@@ -23,9 +24,17 @@ routes.get("/public-test-end", (req, res, next) => {
 
 routes.get("/etf", async (req, res, next) => {
   const fileName = req.query.filename;
+  handleQueryParamError(fileName, next);
   getEtfInformation(fileName)
     .then((value) => {
-      res.send(value);
+      if (value == null) {
+        res.status(400).json({
+          status: "failure",
+          message: "File not found Error",
+        });
+      } else {
+        res.send(value);
+      }
     })
     .catch((err) => {
       next(err);
@@ -34,9 +43,17 @@ routes.get("/etf", async (req, res, next) => {
 
 routes.get("/stock", async (req, res, next) => {
   const fileName = req.query.filename;
+  handleQueryParamError(fileName, next);
   getStockInformation(fileName)
     .then((value) => {
-      res.send(value);
+      if (value == null) {
+        res.status(400).json({
+          status: "failure",
+          message: "File not found Error",
+        });
+      } else {
+        res.send(value);
+      }
     })
     .catch((err) => {
       next(err);

@@ -12,7 +12,16 @@ const getStockInformation = async (fileName) => {
   return result;
 };
 
+const handleQueryParamError = (fileName, next) => {
+  if (!fileName) {
+    const err = new Error("filename query param missing");
+    err.status = 400;
+    next(err);
+  }
+};
+
 module.exports = {
   getEtfInformation,
   getStockInformation,
+  handleQueryParamError,
 };
