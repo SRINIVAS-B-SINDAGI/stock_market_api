@@ -1,0 +1,19 @@
+{
+  "name": "stock_market_api",
+  "version": "1.0.0",
+  "description": "Serves api endpoints for stock market data",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "SRINIVAS-B-SINDAGI",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "prettier": "^2.1.1"
+  }
+}
