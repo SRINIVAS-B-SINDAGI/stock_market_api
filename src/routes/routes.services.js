@@ -1,4 +1,23 @@
 var mongoUtil = require("../utils/mongoUtil");
+const stockScheme = require("../utils/mongooseConnection");
+
+const getEtfsList = async () => {
+  var db = mongoUtil.getDb();
+  const result = await db
+    .collection("symbols_valid_meta")
+    .find({ etf: "Y" })
+    .toArray();
+  return result;
+};
+
+const getStocksList = async () => {
+  var db = mongoUtil.getDb();
+  const result = await db
+    .collection("symbols_valid_meta")
+    .find({ etf: "N" })
+    .toArray();
+  return result;
+};
 
 const getEtfInformation = async (fileName) => {
   var db = mongoUtil.getDb();
@@ -9,6 +28,32 @@ const getEtfInformation = async (fileName) => {
 const getStockInformation = async (fileName) => {
   var db = mongoUtil.getDb();
   const result = await db.collection("stocks").findOne({ filename: fileName });
+  return result;
+};
+
+const getStandardDevation = async (fileName, start, end) => {
+  const result = await stockScheme.aggregate([
+    { $unwind: "$data" },
+    {
+      $match: {
+        filename: fileName,
+        "data.data": {
+          $gte: new Date(start),
+          $lte: new Date(end),
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        filename: 1,
+        "data.data": 1,
+        "data.open": 1,
+        "data.close": 1,
+        "data.high": 1,
+      },
+    },
+  ]);
   return result;
 };
 
@@ -24,4 +69,7 @@ module.exports = {
   getEtfInformation,
   getStockInformation,
   handleQueryParamError,
+  getEtfsList,
+  getStocksList,
+  getStandardDevation,
 };
