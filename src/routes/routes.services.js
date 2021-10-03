@@ -37,7 +37,7 @@ const getStandardDevation = async (fileName, start, end) => {
     {
       $match: {
         filename: fileName,
-        "data.data": {
+        "data.date": {
           $gte: new Date(start),
           $lte: new Date(end),
         },
@@ -47,7 +47,7 @@ const getStandardDevation = async (fileName, start, end) => {
       $project: {
         _id: 0,
         filename: 1,
-        "data.data": 1,
+        "data.date": 1,
         "data.open": 1,
         "data.close": 1,
         "data.high": 1,
