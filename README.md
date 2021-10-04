@@ -1,3 +1,5 @@
+# Stock Market Information Backend
+
 ## Steps to run the project
 
 Install the client project dependencies:
