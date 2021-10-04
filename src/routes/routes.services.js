@@ -1,61 +1,72 @@
-var mongoUtil = require("../utils/mongoUtil");
-const stockScheme = require("../utils/mongooseConnection");
+const {
+  stockScheme,
+  etfScheme,
+  symbolValidMetaScheme,
+} = require("../utils/mongoose");
 
 const getEtfsList = async () => {
-  var db = mongoUtil.getDb();
-  const result = await db
-    .collection("symbols_valid_meta")
-    .find({ etf: "Y" })
-    .toArray();
+  const result = await symbolValidMetaScheme.find({ etf: "Y" });
   return result;
 };
 
 const getStocksList = async () => {
-  var db = mongoUtil.getDb();
-  const result = await db
-    .collection("symbols_valid_meta")
-    .find({ etf: "N" })
-    .toArray();
+  const result = await symbolValidMetaScheme.find({ etf: "N" });
   return result;
 };
 
-const getEtfInformation = async (fileName) => {
-  var db = mongoUtil.getDb();
-  const result = await db.collection("etfs").findOne({ filename: fileName });
-  return result;
-};
-
-const getStockInformation = async (fileName) => {
-  var db = mongoUtil.getDb();
-  const result = await db.collection("stocks").findOne({ filename: fileName });
-  return result;
-};
-
-const getStandardDevation = async (fileName, start, end) => {
-  const result = await stockScheme.aggregate([
-    { $unwind: "$data" },
-    {
-      $match: {
-        filename: fileName,
-        "data.date": {
-          $gte: new Date(start),
-          $lte: new Date(end),
+const getStandardDevation = async (fileName, start, end, type) => {
+  if (type == "stock") {
+    const result = await stockScheme.aggregate([
+      { $unwind: "$data" },
+      {
+        $match: {
+          filename: fileName,
+          "data.date": {
+            $gte: new Date(start),
+            $lte: new Date(end),
+          },
         },
       },
-    },
-    {
-      $project: {
-        _id: 0,
-        filename: 1,
-        "data.date": 1,
-        "data.open": 1,
-        "data.close": 1,
-        "data.high": 1,
-        "data.volume": 1,
+      {
+        $project: {
+          _id: 0,
+          filename: 1,
+          "data.date": 1,
+          "data.open": 1,
+          "data.close": 1,
+          "data.high": 1,
+          "data.volume": 1,
+        },
       },
-    },
-  ]);
-  return result;
+    ]);
+    return result;
+  }
+  if (type == "etf") {
+    const result = await etfScheme.aggregate([
+      { $unwind: "$data" },
+      {
+        $match: {
+          filename: fileName,
+          "data.date": {
+            $gte: new Date(start),
+            $lte: new Date(end),
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          filename: 1,
+          "data.date": 1,
+          "data.open": 1,
+          "data.close": 1,
+          "data.high": 1,
+          "data.volume": 1,
+        },
+      },
+    ]);
+    return result;
+  }
 };
 
 const handleQueryParamError = (fileName, next) => {
@@ -67,8 +78,6 @@ const handleQueryParamError = (fileName, next) => {
 };
 
 module.exports = {
-  getEtfInformation,
-  getStockInformation,
   handleQueryParamError,
   getEtfsList,
   getStocksList,

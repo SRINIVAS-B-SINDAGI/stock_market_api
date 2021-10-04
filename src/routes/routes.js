@@ -3,15 +3,13 @@
 const express = require("express");
 const { checkJwt } = require("../authz/check-jwt");
 const {
-  getEtfInformation,
-  getStockInformation,
   handleQueryParamError,
   getEtfsList,
   getStocksList,
   getStandardDevation,
 } = require("../routes/routes.services");
-// Router Definition
 
+// Router Definition
 const routes = express.Router();
 
 // Controller Definitions
@@ -26,8 +24,7 @@ routes.get("/public-test-end", (req, res, next) => {
 });
 
 // Get All ETFS
-routes.get("/etfs", async (req, res, next) => {
-  // handleQueryParamError(fileName, next);
+routes.get("/etfs", checkJwt, async (req, res, next) => {
   getEtfsList()
     .then((value) => {
       if (value == null) {
@@ -45,7 +42,7 @@ routes.get("/etfs", async (req, res, next) => {
 });
 
 // Get All STOCKS
-routes.get("/stocks", async (req, res, next) => {
+routes.get("/stocks", checkJwt, async (req, res, next) => {
   getStocksList()
     .then((value) => {
       if (value == null) {
@@ -62,50 +59,14 @@ routes.get("/stocks", async (req, res, next) => {
     });
 });
 
-routes.get("/etf", async (req, res, next) => {
-  const fileName = req.query.filename;
-  handleQueryParamError(fileName, next);
-  getEtfInformation(fileName)
-    .then((value) => {
-      if (value == null) {
-        res.status(400).json({
-          status: "failure",
-          message: "File not found Error",
-        });
-      } else {
-        res.send(value);
-      }
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
-
-routes.get("/stock", async (req, res, next) => {
-  const fileName = req.query.filename;
-  handleQueryParamError(fileName, next);
-  getStockInformation(fileName)
-    .then((value) => {
-      if (value == null) {
-        res.status(400).json({
-          status: "failure",
-          message: "File not found Error",
-        });
-      } else {
-        res.send(value);
-      }
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
-
-routes.post("/standard-deviation", async (req, res, next) => {
+routes.post("/standard-deviation", checkJwt, async (req, res, next) => {
   const fileName = req.body.filename;
   const start = req.body.start;
   const end = req.body.end;
+  const type = req.body.type;
+
   // handleQueryParamError(fileName, next);
-  getStandardDevation(fileName, start, end)
+  getStandardDevation(fileName, start, end, type)
     .then((value) => {
       if (value == null) {
         res.status(400).json({

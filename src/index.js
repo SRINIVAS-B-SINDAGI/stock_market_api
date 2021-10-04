@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const { clientOrigins, serverPort } = require("./config/env.dev");
-var mongoUtil = require("../src/utils/mongoUtil");
 
 const routes = require("./routes/routes");
 
@@ -19,11 +18,6 @@ app.use("/api", routes);
 app.use(function (err, req, res, next) {
   console.log(err);
   res.status(500).send(err.message);
-});
-
-// Establish connection to mongodb
-mongoUtil.connectToServer(function (err) {
-  if (err) console.log(err);
 });
 
 // Start Server
