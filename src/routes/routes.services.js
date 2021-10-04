@@ -51,6 +51,7 @@ const getStandardDevation = async (fileName, start, end) => {
         "data.open": 1,
         "data.close": 1,
         "data.high": 1,
+        "data.volume": 1,
       },
     },
   ]);
